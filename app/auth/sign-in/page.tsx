@@ -15,7 +15,7 @@ function SignInForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    });
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const redirectTo = searchParams.get("redirectTo") || "/";

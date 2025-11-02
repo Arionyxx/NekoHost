@@ -29,7 +29,7 @@ test.describe("Settings Page (visual check)", () => {
   }) => {
     await page.goto("/settings");
     await page.waitForURL(/\/auth\/sign-in/);
-    
+
     await expect(page.getByLabel(/email/i)).toBeVisible();
     await expect(page.getByLabel(/password/i)).toBeVisible();
   });

@@ -43,6 +43,7 @@ Created `/lib/supabase/auth-context.tsx` with:
 - **`useSupabase()`** - Hook to access the authenticated Supabase client
 
 The provider automatically subscribes to auth state changes and provides three states:
+
 - `loading` - Initial state while checking authentication
 - `authenticated` - User is signed in
 - `unauthenticated` - User is not signed in
@@ -167,11 +168,13 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
 ## 🚀 Quick Start
 
 1. **Start Supabase**:
+
    ```bash
    npm run supabase:start
    ```
 
 2. **Configure environment**:
+
    ```bash
    cp .env.example .env.local
    # Update .env.local with your credentials

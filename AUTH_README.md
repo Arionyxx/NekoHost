@@ -7,6 +7,7 @@ This document describes the authentication and settings features implemented in 
 ### Authentication Pages
 
 #### Sign In (`/auth/sign-in`)
+
 - Email/password authentication with Supabase
 - Form validation with error messages
 - Password reset link
@@ -14,6 +15,7 @@ This document describes the authentication and settings features implemented in 
 - Links to sign-up page
 
 #### Sign Up (`/auth/sign-up`)
+
 - User registration with email, password, and display name
 - Password confirmation validation
 - Automatic profile creation via database trigger
@@ -21,12 +23,14 @@ This document describes the authentication and settings features implemented in 
 - Links to sign-in page
 
 #### Password Reset (`/auth/reset`)
+
 - Send password reset email via Supabase
 - Email validation
 - Success confirmation screen
 - Links back to sign-in
 
 #### Update Password (`/auth/update-password`)
+
 - Update password after reset flow
 - Password confirmation validation
 - Automatic redirect to home after success
@@ -36,10 +40,12 @@ This document describes the authentication and settings features implemented in 
 The navigation component is now authentication-aware:
 
 **When Logged Out:**
+
 - "Sign In" and "Sign Up" buttons in desktop view
 - Same buttons in mobile menu
 
 **When Logged In:**
+
 - User avatar (first letter of email) with dropdown menu
 - Dropdown contains:
   - User email display
@@ -51,7 +57,9 @@ The navigation component is now authentication-aware:
 ### Protected Pages
 
 #### Profile Page (`/profile`)
+
 Shows user information and statistics:
+
 - Account details (display name, email, avatar URL, default visibility)
 - Member since date
 - Total uploads count
@@ -59,21 +67,25 @@ Shows user information and statistics:
 - Links to settings for editing
 
 #### Settings Page (`/settings`)
+
 Allows users to configure their account:
 
 **Profile Settings:**
+
 - Edit display name
 - Edit avatar URL
 - Set default image visibility (public/private)
 - Save changes button with optimistic UI
 
 **API Token Management:**
+
 - Generate new API tokens with optional description
 - View existing tokens (shows last 8 characters of hash)
 - Delete tokens with confirmation
 - See token creation dates
 
 **ShareX Integration:**
+
 - After generating a token, displays:
   - Full token value (shown only once!)
   - ShareX JSON configuration snippet
@@ -106,6 +118,7 @@ Allows users to configure their account:
 ### Toast Notifications
 
 All pages include toast notifications for:
+
 - Success messages (green)
 - Error messages (red)
 - Info messages (blue)
@@ -138,6 +151,7 @@ Toasts auto-dismiss after 5 seconds and can be manually closed.
 Located in `/tests` directory using Playwright:
 
 **Auth Tests (`auth.spec.ts`):**
+
 - Navigation between auth pages
 - Form validation errors
 - Sign in/sign up page rendering
@@ -145,11 +159,13 @@ Located in `/tests` directory using Playwright:
 - Links between pages
 
 **Profile/Settings Tests (`profile.spec.ts`):**
+
 - Protected route redirects
 - Redirect URL preservation
 - Page structure validation
 
 **Running Tests:**
+
 ```bash
 npm test                 # Run all tests headless
 npm run test:ui          # Run tests with UI
@@ -159,6 +175,7 @@ npm run test:report      # View test report
 ## Database Schema
 
 ### Profiles Table
+
 - `id` (UUID) - References auth.users
 - `display_name` (text) - User's display name
 - `avatar_url` (text) - URL to user's avatar image
@@ -167,6 +184,7 @@ npm run test:report      # View test report
 - `created_at`, `updated_at` (timestamptz)
 
 ### API Tokens Table
+
 - `id` (UUID) - Primary key
 - `owner_id` (UUID) - References auth.users
 - `token_hash` (text) - SHA-256 hash of token
@@ -216,6 +234,7 @@ function MyComponent() {
 ### Generating API Tokens
 
 The token generation process:
+
 1. Generate 32 random bytes using `crypto.getRandomValues()`
 2. Convert to hex string (64 characters)
 3. Hash with SHA-256 for storage
@@ -234,6 +253,7 @@ The token generation process:
 ## Future Enhancements
 
 Potential improvements:
+
 - Email verification flow
 - OAuth providers (Google, GitHub, etc.)
 - Two-factor authentication

@@ -48,13 +48,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ToastItem({
-  toast,
-  onClose,
-}: {
-  toast: Toast;
-  onClose: () => void;
-}) {
+function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
   const typeStyles = {
     success: "bg-ctp-green text-ctp-crust border-ctp-green",
     error: "bg-ctp-red text-ctp-crust border-ctp-red",

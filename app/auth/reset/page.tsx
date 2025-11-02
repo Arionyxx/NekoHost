@@ -78,7 +78,9 @@ export default function ResetPasswordPage() {
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-accent">Check your email</h1>
+              <h1 className="text-3xl font-bold text-accent">
+                Check your email
+              </h1>
               <p className="mt-2 text-foreground-muted">
                 We&apos;ve sent a password reset link to{" "}
                 <span className="font-medium text-foreground">{email}</span>

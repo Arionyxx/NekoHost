@@ -8,20 +8,24 @@ test.describe("Authentication", () => {
   test("should display sign in and sign up buttons when not authenticated", async ({
     page,
   }) => {
-    await expect(
-      page.getByRole("button", { name: /sign in/i })
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: /sign in/i })).toBeVisible();
     await expect(page.getByRole("button", { name: /sign up/i })).toBeVisible();
   });
 
   test("should navigate to sign-in page", async ({ page }) => {
-    await page.getByRole("button", { name: /sign in/i }).first().click();
+    await page
+      .getByRole("button", { name: /sign in/i })
+      .first()
+      .click();
     await expect(page).toHaveURL("/auth/sign-in");
     await expect(page.getByRole("heading", { name: /sign in/i })).toBeVisible();
   });
 
   test("should navigate to sign-up page", async ({ page }) => {
-    await page.getByRole("button", { name: /sign up/i }).first().click();
+    await page
+      .getByRole("button", { name: /sign up/i })
+      .first()
+      .click();
     await expect(page).toHaveURL("/auth/sign-up");
     await expect(page.getByRole("heading", { name: /sign up/i })).toBeVisible();
   });

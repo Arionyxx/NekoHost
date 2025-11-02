@@ -7,24 +7,37 @@ export default function Home() {
       {/* Hero Section */}
       <section className="text-center py-12">
         <Badge variant="accent" className="mb-4">
-          Next.js 14 + TypeScript
+          Fast & Secure Image Hosting
         </Badge>
         <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-ctp-mauve to-ctp-lavender bg-clip-text text-transparent">
-          Welcome to Your App
+          Upload & Share Images Instantly
         </h1>
         <p className="text-xl text-foreground-muted mb-8 max-w-2xl mx-auto">
-          A modern Next.js application with TypeScript, Tailwind CSS, and the
-          beautiful Catppuccin Macchiato color palette.
+          A modern image hosting platform with drag-and-drop uploads, ShareX
+          integration, and beautiful Catppuccin-themed interface.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/upload">
             <Button variant="primary" size="lg">
-              Get Started
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Upload Images
             </Button>
           </Link>
-          <Button variant="outline" size="lg">
-            Learn More
-          </Button>
+          <Link href="/settings">
+            <Button variant="outline" size="lg">
+              ShareX Setup
+            </Button>
+          </Link>
         </div>
       </section>
 
@@ -42,16 +55,16 @@ export default function Home() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
           </div>
           <h3 className="text-xl font-semibold mb-2 text-foreground">
-            Lightning Fast
+            Drag & Drop Upload
           </h3>
           <p className="text-foreground-muted">
-            Built with Next.js 14 and optimized for performance with the App
-            Router.
+            Upload multiple images at once with an intuitive drag-and-drop
+            interface and real-time progress tracking.
           </p>
         </Card>
 
@@ -67,15 +80,16 @@ export default function Home() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
           <h3 className="text-xl font-semibold mb-2 text-foreground">
-            Beautiful Design
+            ShareX Integration
           </h3>
           <p className="text-foreground-muted">
-            Styled with Tailwind CSS and the Catppuccin Macchiato color palette.
+            Seamlessly integrate with ShareX for automated screenshot uploads
+            with customizable API tokens.
           </p>
         </Card>
 
@@ -91,16 +105,16 @@ export default function Home() {
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
           </div>
           <h3 className="text-xl font-semibold mb-2 text-foreground">
-            Type Safe
+            Secure & Private
           </h3>
           <p className="text-foreground-muted">
-            Full TypeScript support for better developer experience and fewer
-            bugs.
+            Your images are stored securely with Supabase Storage and protected
+            by row-level security policies.
           </p>
         </Card>
       </section>
@@ -109,16 +123,25 @@ export default function Home() {
       <section className="text-center py-12">
         <Card className="max-w-3xl mx-auto">
           <h2 className="text-3xl font-bold mb-4 text-foreground">
-            Ready to get started?
+            Ready to start uploading?
           </h2>
           <p className="text-foreground-muted mb-6">
-            Explore the upload page to see more components in action.
+            Upload your first image in seconds or set up ShareX for automated
+            screenshot sharing. Get instant shareable links with markdown and
+            HTML snippets.
           </p>
-          <Link href="/upload">
-            <Button variant="primary" size="lg">
-              Go to Upload
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/upload">
+              <Button variant="primary" size="lg">
+                Start Uploading
+              </Button>
+            </Link>
+            <Link href="/settings">
+              <Button variant="outline" size="lg">
+                Configure ShareX
+              </Button>
+            </Link>
+          </div>
         </Card>
       </section>
     </div>
