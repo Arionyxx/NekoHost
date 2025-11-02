@@ -233,6 +233,11 @@ export async function POST(request: NextRequest) {
     };
 
     if (!result.success) {
+      console.log("[ShareX Upload Failed]", {
+        userId,
+        filename: file.name,
+        error: result.error,
+      });
       return NextResponse.json(
         { error: result.error || "Upload failed" },
         { status: 400, headers }
@@ -240,14 +245,25 @@ export async function POST(request: NextRequest) {
     }
 
     // Return ShareX-compatible response
-    return NextResponse.json(
-      {
-        success: true,
-        url: result.url,
-        filename: result.filename,
-      },
-      { status: 200, headers }
+    // ShareX expects ONLY the url field for proper clipboard copying
+    const response = {
+      url: result.url,
+    };
+    
+    // Log the response for debugging
+    console.log("[ShareX Upload Success]", {
+      imageUrl: result.url,
+      filename: result.filename,
+      userId,
+      responseStructure: response,
+    });
+    
+    logger.info(
+      { userId, tokenId, url: result.url, filename: result.filename },
+      "ShareX upload completed successfully"
     );
+    
+    return NextResponse.json(response, { status: 200, headers });
   } catch (error) {
     const duration = Date.now() - startTime;
     
@@ -419,8 +435,19 @@ async function uploadFile(
     }
 
     // Construct view URL for ShareX (not direct storage URL)
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+    const baseUrl = siteUrl || appUrl || 'http://localhost:3000';
     const viewUrl = `${baseUrl}/i/${imageData.id}`;
+    
+    // Log URL construction for debugging
+    console.log("[ShareX URL Construction]", {
+      siteUrl: siteUrl || "not set",
+      appUrl: appUrl || "not set", 
+      baseUrl,
+      imageId: imageData.id,
+      finalUrl: viewUrl,
+    });
 
     logger.info(
       { userId, filename, imageId: imageData.id, visibility, viewUrl },
