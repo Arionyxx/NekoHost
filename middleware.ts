@@ -7,7 +7,21 @@ import type { NextRequest } from "next/server";
  * This will refresh expired auth sessions and protect authenticated routes
  */
 export async function middleware(request: NextRequest) {
+  // Skip middleware for auth callback to prevent redirect loops
+  if (request.nextUrl.pathname.startsWith("/auth/callback")) {
+    return NextResponse.next();
+  }
+
   const { response, user } = await updateSession(request);
+
+  // Add debugging in development
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Middleware]", {
+      path: request.nextUrl.pathname,
+      user: user ? user.email : "none",
+      cookies: request.cookies.getAll().map((c) => c.name),
+    });
+  }
 
   // Protected routes that require authentication
   const protectedRoutes = ["/profile", "/settings", "/upload"];

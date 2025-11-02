@@ -41,11 +41,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           data: { session: initialSession },
         } = await supabase.auth.getSession();
 
+        console.log("[AuthContext] Initial session:", {
+          user: initialSession?.user?.email,
+          hasSession: !!initialSession,
+        });
+
         setSession(initialSession);
         setUser(initialSession?.user ?? null);
         setAuthState(initialSession ? "authenticated" : "unauthenticated");
       } catch (error) {
-        console.error("Error initializing auth:", error);
+        console.error("[AuthContext] Error initializing auth:", error);
         setAuthState("unauthenticated");
       }
     };
@@ -55,7 +60,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+    } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      console.log("[AuthContext] Auth state changed:", {
+        event,
+        user: currentSession?.user?.email,
+        hasSession: !!currentSession,
+      });
+
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       setAuthState(currentSession ? "authenticated" : "unauthenticated");

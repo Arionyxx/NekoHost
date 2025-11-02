@@ -50,19 +50,31 @@ function SignInForm() {
     setErrors({});
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
       });
 
       if (error) {
+        console.error("[Sign In] Auth error:", error);
         showToast(error.message, "error");
         return;
       }
 
+      console.log("[Sign In] Success:", {
+        user: data.user?.email,
+        session: !!data.session,
+      });
+
       showToast("Signed in successfully!", "success");
+
+      // Small delay to ensure session is set in cookies
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       router.push(redirectTo);
-    } catch {
+      router.refresh();
+    } catch (error) {
+      console.error("[Sign In] Unexpected error:", error);
       showToast("An unexpected error occurred", "error");
     } finally {
       setIsLoading(false);
