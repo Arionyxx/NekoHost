@@ -184,11 +184,144 @@ See `.env.example` for required environment variables. Copy it to `.env.local` a
 cp .env.example .env.local
 ```
 
+## Supabase Setup
+
+This project uses Supabase for authentication, database, and storage. You can run Supabase locally for development or connect to a remote Supabase project.
+
+### Prerequisites
+
+Install the Supabase client libraries:
+
+```bash
+pnpm add @supabase/supabase-js @supabase/auth-helpers-nextjs
+```
+
+### Local Development
+
+1. **Install Docker** (required for local Supabase):
+   - [Docker Desktop](https://www.docker.com/products/docker-desktop) for Mac/Windows
+   - [Docker Engine](https://docs.docker.com/engine/install/) for Linux
+
+2. **Start Supabase locally**:
+
+   ```bash
+   pnpm supabase:start
+   ```
+
+   This will:
+   - Start all Supabase services in Docker containers
+   - Apply all migrations from `supabase/migrations/`
+   - Output the API URL and keys (update your `.env.local` with these values)
+
+3. **Access Supabase Studio**:
+   - Open http://localhost:54323 in your browser
+   - Use Supabase Studio to view your database, run queries, and manage data
+
+4. **Stop Supabase**:
+   ```bash
+   pnpm supabase:stop
+   ```
+
+### Connecting to a Remote Supabase Project
+
+1. **Create a Supabase project**:
+   - Go to [supabase.com](https://supabase.com)
+   - Create a new project
+
+2. **Link your local repository** to the remote project:
+
+   ```bash
+   npx supabase link --project-ref your-project-ref
+   ```
+
+   You can find your project ref in the Supabase dashboard URL:
+   `https://app.supabase.com/project/[your-project-ref]`
+
+3. **Push migrations to remote**:
+
+   ```bash
+   npx supabase db push
+   ```
+
+4. **Update environment variables**:
+   - Copy the API URL and anon key from your Supabase project settings
+   - Update `.env.local` with the production values
+
+### Database Schema
+
+The database includes three main tables:
+
+#### `profiles`
+
+- Linked to `auth.users` via UUID
+- Stores user display name, avatar URL, and ShareX preferences
+- RLS: Users can view all profiles, but only update their own
+
+#### `images`
+
+- Stores metadata for uploaded images
+- Fields: id, owner_id, storage_key, filename, extension, size, dimensions, mime_type, checksum, visibility
+- RLS: Public images viewable by all, private images only by owner
+- Cascade delete: Deleting an image record also removes the file from storage
+
+#### `api_tokens`
+
+- Used for ShareX integration and API authentication
+- Stores hashed tokens, not plaintext
+- RLS: Full access limited to token owner
+
+### Storage
+
+Images are stored in the `images` bucket with:
+
+- Public read access (visibility controlled by RLS and metadata)
+- Authenticated write access
+- 50MB file size limit
+- Allowed MIME types: JPEG, PNG, GIF, WebP, SVG, BMP, TIFF
+
+### Available Supabase Scripts
+
+- `pnpm supabase:start` - Start local Supabase instance
+- `pnpm supabase:stop` - Stop local Supabase instance
+- `pnpm supabase:status` - Check status of local Supabase services
+- `pnpm supabase:reset` - Reset local database (reapply all migrations)
+- `pnpm supabase:types` - Regenerate TypeScript types from database schema
+- `pnpm supabase:migrate` - Push local migrations to remote project
+
+### Creating New Migrations
+
+1. **Generate a new migration file**:
+
+   ```bash
+   npx supabase migration new your_migration_name
+   ```
+
+2. **Edit the migration file** in `supabase/migrations/`
+
+3. **Apply the migration locally**:
+
+   ```bash
+   pnpm supabase:reset
+   ```
+
+4. **Regenerate TypeScript types**:
+
+   ```bash
+   pnpm supabase:types
+   ```
+
+5. **Push to remote** (when ready):
+   ```bash
+   pnpm supabase:migrate
+   ```
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Catppuccin Theme](https://github.com/catppuccin/catppuccin)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 
 ## License
 

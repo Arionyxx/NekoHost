@@ -1,0 +1,12 @@
+# SQL files
+*.sql linguist-language=sql
+
+# Ensure consistent line endings
+* text=auto
+*.sql text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
