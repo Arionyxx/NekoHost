@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSupabase } from "@/lib/supabase/auth-context";
+import { useSupabase, useSession } from "@/lib/supabase/auth-context";
 import ImageCard from "@/components/ImageCard";
 import FilterBar from "@/components/FilterBar";
 import InfiniteScroll from "@/components/InfiniteScroll";
@@ -27,6 +27,7 @@ const IMAGES_PER_PAGE = 20;
 
 export default function GalleryPage() {
   const supabase = useSupabase();
+  const { authState } = useSession();
   const [images, setImages] = useState<ImageData[]>([]);
   const [filteredImages, setFilteredImages] = useState<ImageData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,9 +73,31 @@ export default function GalleryPage() {
 
         const { data, error } = await query;
 
-        if (error) throw error;
+        if (error) {
+          console.error("[Gallery] Query error:", {
+            error,
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+          });
+          throw error;
+        }
 
         const newImages = (data || []) as unknown as ImageData[];
+
+        console.log("[Gallery] Fetched images:", {
+          count: newImages.length,
+          pageNum,
+          hasData: !!data,
+          firstImage: newImages[0] ? {
+            id: newImages[0].id,
+            filename: newImages[0].filename,
+            visibility: 'public',
+            storage_key: newImages[0].storage_key,
+            owner_id: newImages[0].owner_id,
+          } : null,
+        });
 
         if (reset) {
           setImages(newImages);
@@ -96,8 +119,10 @@ export default function GalleryPage() {
   );
 
   useEffect(() => {
-    fetchImages(0, true);
-  }, [fetchImages]);
+    if (authState !== "loading") {
+      fetchImages(0, true);
+    }
+  }, [fetchImages, authState]);
 
   useEffect(() => {
     if (searchQuery.trim() === "") {

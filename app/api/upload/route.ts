@@ -167,6 +167,14 @@ async function uploadFile(
       };
     }
 
+    console.log("[Upload] Image saved to database:", {
+      id: imageData.id,
+      filename: imageData.filename,
+      visibility: imageData.visibility,
+      storage_key: imageData.storage_key,
+      owner_id: imageData.owner_id,
+    });
+
     const {
       data: { publicUrl },
     } = supabase.storage.from("images").getPublicUrl(storageKey);

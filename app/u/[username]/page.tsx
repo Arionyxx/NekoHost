@@ -126,9 +126,33 @@ export default function UserGalleryPage({
 
         const { data, error } = await query;
 
-        if (error) throw error;
+        if (error) {
+          console.error("[User Gallery] Query error:", {
+            error,
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+          });
+          throw error;
+        }
 
         const newImages = (data || []) as unknown as ImageData[];
+
+        console.log("[User Gallery] Fetched images:", {
+          count: newImages.length,
+          pageNum,
+          userId,
+          isOwner,
+          hasData: !!data,
+          firstImage: newImages[0] ? {
+            id: newImages[0].id,
+            filename: newImages[0].filename,
+            visibility: newImages[0].visibility,
+            storage_key: newImages[0].storage_key,
+            owner_id: newImages[0].owner_id,
+          } : null,
+        });
 
         if (reset) {
           setImages(newImages);
