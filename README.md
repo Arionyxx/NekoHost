@@ -8,9 +8,12 @@ A modern Next.js 14 application with TypeScript, Tailwind CSS, and the beautiful
 - 🎨 **TypeScript** for type safety
 - 💅 **Tailwind CSS** for styling
 - 🌈 **Catppuccin Macchiato** color palette
+- 🔐 **Supabase Authentication** - Full auth integration with React hooks
 - 🎯 **UI Components** - Button, Card, Input, Badge, Skeleton/Loader
 - 🔧 **Developer Tools** - ESLint, Prettier, Husky, lint-staged
 - 📱 **Responsive Design** with mobile-friendly navigation
+- 🛡️ **Protected Routes** - Middleware-based route protection
+- ✅ **Environment Validation** - Runtime validation with Zod
 
 ## Getting Started
 
@@ -62,7 +65,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 ```
 .
 ├── app/                    # Next.js App Router pages
-│   ├── layout.tsx         # Root layout with navigation
+│   ├── layout.tsx         # Root layout with AuthProvider
 │   ├── page.tsx           # Home page
 │   ├── upload/            # Upload page
 │   └── globals.css        # Global styles
@@ -74,6 +77,21 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 │   │   ├── Badge.tsx
 │   │   └── Skeleton.tsx
 │   └── Navigation.tsx    # Navigation component
+├── lib/                   # Utilities and shared code
+│   ├── env.ts            # Environment validation (Zod)
+│   └── supabase/         # Supabase client utilities
+│       ├── client.ts     # Browser client
+│       ├── server.ts     # Server client + helpers
+│       ├── middleware.ts # Middleware helper
+│       ├── auth-context.tsx # React context & hooks
+│       ├── index.ts      # Central exports
+│       ├── README.md     # Documentation
+│       └── USAGE.md      # Usage examples
+├── supabase/              # Supabase configuration
+│   ├── migrations/       # Database migrations
+│   ├── types/           # Generated TypeScript types
+│   └── config.toml      # Supabase configuration
+├── middleware.ts          # Next.js middleware (auth)
 ├── .husky/               # Git hooks
 ├── tailwind.config.ts    # Tailwind configuration
 ├── tsconfig.json         # TypeScript configuration
@@ -190,11 +208,38 @@ This project uses Supabase for authentication, database, and storage. You can ru
 
 ### Prerequisites
 
-Install the Supabase client libraries:
+The required Supabase packages are already installed:
+
+- `@supabase/supabase-js` - Core Supabase JavaScript client
+- `@supabase/ssr` - Server-side rendering helpers for Next.js
+- `zod` - Runtime environment variable validation
+
+### Configuring Environment Variables
+
+**Important:** The application validates environment variables at runtime. Missing or invalid Supabase configuration will cause the app to throw an error with a helpful message.
+
+1. Copy the example environment file:
 
 ```bash
-pnpm add @supabase/supabase-js @supabase/auth-helpers-nextjs
+cp .env.example .env.local
 ```
+
+2. Update `.env.local` with your Supabase credentials:
+
+```env
+# For local development
+NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+
+# For production
+# NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
+```
+
+**Getting your Supabase credentials:**
+
+- **Local Development**: Run `pnpm supabase:start` and copy the API URL and anon key from the output
+- **Production**: Go to your Supabase project settings → API → Copy the URL and anon key
 
 ### Local Development
 
@@ -278,6 +323,54 @@ Images are stored in the `images` bucket with:
 - Authenticated write access
 - 50MB file size limit
 - Allowed MIME types: JPEG, PNG, GIF, WebP, SVG, BMP, TIFF
+
+### Authentication & Client Setup
+
+The application includes a complete authentication setup with:
+
+#### Client Utilities
+
+- **Browser Client** (`@/lib/supabase/client`) - For client components
+- **Server Client** (`@/lib/supabase/server`) - For server components and actions
+- **Helper Functions** (`getUser()`, `getSession()`) - Retrieve auth state on the server
+
+#### React Hooks
+
+The app provides React hooks for client-side authentication:
+
+```tsx
+import { useSession, useSupabase } from "@/lib/supabase/auth-context";
+
+function MyComponent() {
+  const { user, isLoading, isAuthenticated } = useSession();
+  const supabase = useSupabase();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (!isAuthenticated) return <div>Please sign in</div>;
+
+  return <div>Welcome, {user.email}!</div>;
+}
+```
+
+**Available hooks:**
+
+- `useSession()` - Returns `{ user, session, authState, isLoading, isAuthenticated, isUnauthenticated }`
+- `useSupabase()` - Returns the authenticated Supabase client
+
+#### Protected Routes
+
+The middleware automatically protects these routes:
+
+- `/profile` - User profile page
+- `/upload` - File upload page
+
+Unauthenticated users are redirected to `/auth/sign-in` with a `redirectTo` parameter for seamless return after login.
+
+#### Environment Validation
+
+The app validates Supabase environment variables at runtime using Zod. If `NEXT_PUBLIC_SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_ANON_KEY` are missing or invalid, the app will throw a descriptive error during initialization.
+
+See `/lib/supabase/README.md` for detailed documentation on using the Supabase clients.
 
 ### Available Supabase Scripts
 
