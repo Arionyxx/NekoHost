@@ -14,6 +14,7 @@ export default function Navigation() {
   const { showToast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [userGalleryUrl, setUserGalleryUrl] = useState<string | null>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,12 +35,36 @@ export default function Navigation() {
     }
   }, [isProfileOpen]);
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user?.id) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("id", user.id)
+          .single();
+
+        if (data?.display_name) {
+          const username = data.display_name.toLowerCase().replace(/\s+/g, "-");
+          setUserGalleryUrl(`/u/${username}`);
+        } else {
+          setUserGalleryUrl(`/u/${user.id.slice(0, 8)}`);
+        }
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchUserProfile();
+    }
+  }, [user, isAuthenticated, supabase]);
+
   const links: Array<{
     href: string;
     label: string;
     authRequired?: boolean;
   }> = [
     { href: "/", label: "Home" },
+    { href: "/gallery", label: "Gallery" },
     { href: "/upload", label: "Upload", authRequired: true },
   ];
 
@@ -113,6 +138,15 @@ export default function Navigation() {
                         >
                           Profile
                         </Link>
+                        {userGalleryUrl && (
+                          <Link
+                            href={userGalleryUrl}
+                            onClick={() => setIsProfileOpen(false)}
+                            className="block px-4 py-2 text-sm text-foreground hover:bg-ctp-surface0 transition-colors"
+                          >
+                            My Gallery
+                          </Link>
+                        )}
                         <Link
                           href="/settings"
                           onClick={() => setIsProfileOpen(false)}
@@ -214,6 +248,15 @@ export default function Navigation() {
                     >
                       Profile
                     </Link>
+                    {userGalleryUrl && (
+                      <Link
+                        href={userGalleryUrl}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-ctp-surface0 transition-colors"
+                      >
+                        My Gallery
+                      </Link>
+                    )}
                     <Link
                       href="/settings"
                       onClick={() => setIsMenuOpen(false)}
