@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSupabase, useSession } from "@/lib/supabase/auth-context";
 import { Badge, Card, Skeleton, Button } from "@/components/ui";
@@ -26,9 +26,9 @@ interface ImageData {
 export default function ImageDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const resolvedParams = use(params);
+  const { id } = params;
   const supabase = useSupabase();
   const { user } = useSession();
   const router = useRouter();
@@ -59,7 +59,7 @@ export default function ImageDetailPage({
             )
           `
           )
-          .eq("id", resolvedParams.id)
+          .eq("id", id)
           .single();
 
         if (error || !data) {
@@ -87,7 +87,7 @@ export default function ImageDetailPage({
     };
 
     fetchImage();
-  }, [supabase, resolvedParams.id, user]);
+  }, [supabase, id, user]);
 
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
