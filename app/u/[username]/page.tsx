@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSupabase, useSession } from "@/lib/supabase/auth-context";
 import ImageCard from "@/components/ImageCard";
 import FilterBar from "@/components/FilterBar";
@@ -29,9 +29,9 @@ const IMAGES_PER_PAGE = 20;
 export default function UserGalleryPage({
   params,
 }: {
-  params: Promise<{ username: string }>;
+  params: { username: string };
 }) {
-  const resolvedParams = use(params);
+  const { username } = params;
   const supabase = useSupabase();
   const { user } = useSession();
   const [images, setImages] = useState<ImageData[]>([]);
@@ -56,7 +56,7 @@ export default function UserGalleryPage({
         .select("id, display_name")
         .ilike(
           "display_name",
-          resolvedParams.username.replace(/-/g, " ")
+          username.replace(/-/g, " ")
         )
         .limit(1);
 
@@ -66,7 +66,7 @@ export default function UserGalleryPage({
         const { data: profileById, error: idError } = await supabase
           .from("profiles")
           .select("id, display_name")
-          .eq("id", resolvedParams.username)
+          .eq("id", username)
           .single();
 
         if (idError || !profileById) {
@@ -83,7 +83,7 @@ export default function UserGalleryPage({
       setNotFound(true);
       return null;
     }
-  }, [supabase, resolvedParams.username]);
+  }, [supabase, username]);
 
   const fetchImages = useCallback(
     async (pageNum: number, userId: string, reset = false) => {
