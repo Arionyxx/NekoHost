@@ -189,9 +189,8 @@ test.describe("ShareX API Endpoint", () => {
 
     expect(response.status()).toBe(200);
     const body = await response.json();
-    expect(body.success).toBe(true);
     expect(body.url).toBeTruthy();
-    expect(body.filename).toBeTruthy();
+    expect(body.url).toMatch(/\/i\//); // Should be a view URL like /i/{id}
 
     // Check rate limit headers
     const headers = response.headers();
