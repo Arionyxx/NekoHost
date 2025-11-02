@@ -4,11 +4,11 @@ These utility files provide type-safe Supabase clients for different Next.js con
 
 ## Prerequisites
 
-Before using these utilities, install the required packages:
+The required packages are already installed:
 
-```bash
-pnpm add @supabase/supabase-js @supabase/auth-helpers-nextjs
-```
+- `@supabase/supabase-js` - Core Supabase client
+- `@supabase/ssr` - Server-side rendering helpers
+- `zod` - Environment variable validation
 
 ## Files
 
@@ -28,36 +28,65 @@ const supabase = createClient();
 Creates a Supabase client for use in **Server Components** and **Server Actions**.
 
 ```typescript
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser, getSession } from "@/lib/supabase/server";
 
 // In a server component or server action
 const supabase = createClient();
+
+// Get the current authenticated user
+const user = await getUser();
+
+// Get the current session
+const session = await getSession();
 ```
+
+### `auth-context.tsx`
+
+Provides React context and hooks for client-side authentication state.
+
+**Hooks:**
+
+- `useSession()` - Access user, session, and loading state
+- `useSupabase()` - Access the Supabase client instance
+
+**Example usage:**
+
+```typescript
+import { useSession, useSupabase } from "@/lib/supabase/auth-context";
+
+function MyComponent() {
+  const { user, isLoading, isAuthenticated } = useSession();
+  const supabase = useSupabase();
+
+  if (isLoading) return <Loader />;
+  if (!isAuthenticated) return <SignIn />;
+
+  return <div>Hello {user?.email}</div>;
+}
+```
+
+The `AuthProvider` is already configured in the root layout, so all components have access to these hooks.
 
 ### `middleware.ts`
 
 Provides a helper function for handling authentication in Next.js middleware.
 
-To use this:
+The middleware is configured at `/middleware.ts` and automatically:
 
-1. Create or update `/middleware.ts` at the root of your project
-2. Import and use the `updateSession` function
+- Refreshes expired auth sessions
+- Protects authenticated routes (`/profile`, `/upload`)
+- Redirects unauthenticated users to sign-in
 
-Example `/middleware.ts`:
+## Environment Variables
 
-```typescript
-import { updateSession } from "@/lib/supabase/middleware";
+Required environment variables (validated at runtime using Zod):
 
-export async function middleware(request: Request) {
-  return await updateSession(request);
-}
-
-export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
-};
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
+
+If these are missing or invalid, the app will throw an error with a helpful message.
 
 ## Type Safety
 
@@ -68,6 +97,25 @@ This provides:
 - Autocomplete for table names and columns
 - Type checking for queries and mutations
 - IntelliSense for available operations
+
+## Auth State Management
+
+The app uses a React Context (`AuthProvider`) to manage authentication state globally:
+
+- **Loading**: Initial state while checking authentication
+- **Authenticated**: User is signed in
+- **Unauthenticated**: User is not signed in
+
+The context automatically subscribes to auth state changes and updates all components.
+
+## Protected Routes
+
+The middleware protects the following routes:
+
+- `/profile` - User profile page
+- `/upload` - File upload page
+
+Unauthenticated users are redirected to `/auth/sign-in` with a `redirectTo` parameter.
 
 ## Examples
 
