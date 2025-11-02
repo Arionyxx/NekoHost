@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Badge } from "@/components/ui";
+import { Badge, useToast } from "@/components/ui";
 
 interface ImageCardProps {
   id: string;
@@ -33,6 +33,7 @@ export default function ImageCard({
 }: ImageCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { showToast } = useToast();
 
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
@@ -52,6 +53,14 @@ export default function ImageCard({
     if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
     if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
     return `${Math.floor(diffInDays / 365)} years ago`;
+  };
+
+  const handleCopyLink = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const imageUrl = `${window.location.origin}/i/${id}`;
+    navigator.clipboard.writeText(imageUrl);
+    showToast("Link copied to clipboard!", "success");
   };
 
   const aspectRatio = width && height ? width / height : 1;
@@ -103,6 +112,28 @@ export default function ImageCard({
             isHovered ? "opacity-100" : "opacity-0"
           }`}
         >
+          <div
+            className={`absolute top-2 z-20 ${showVisibilityBadge && visibility ? "left-2" : "right-2"}`}
+          >
+            <button
+              onClick={handleCopyLink}
+              className="bg-accent hover:bg-accent-hover text-background p-2 rounded-md transition-colors shadow-soft"
+              title="Copy link"
+              aria-label="Copy link to clipboard"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </button>
+          </div>
           <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
             <h3 className="font-semibold text-ctp-text mb-2 truncate">
               {filename}
