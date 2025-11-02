@@ -10,7 +10,7 @@ import { getEnv } from "@/lib/env";
  */
 export async function updateSession(request: NextRequest) {
   const env = getEnv();
-  let supabaseResponse = NextResponse.next({
+  const supabaseResponse = NextResponse.next({
     request,
   });
 
