@@ -54,10 +54,7 @@ export default function UserGalleryPage({
       const { data: profiles, error } = await supabase
         .from("profiles")
         .select("id, display_name")
-        .ilike(
-          "display_name",
-          username.replace(/-/g, " ")
-        )
+        .ilike("display_name", username.replace(/-/g, " "))
         .limit(1);
 
       if (error) throw error;
@@ -131,7 +128,7 @@ export default function UserGalleryPage({
 
         if (error) throw error;
 
-        const newImages = (data || []) as ImageData[];
+        const newImages = (data || []) as unknown as ImageData[];
 
         if (reset) {
           setImages(newImages);

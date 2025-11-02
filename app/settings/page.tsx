@@ -14,6 +14,7 @@ interface ApiToken {
   id: string;
   token_hash: string;
   description: string | null;
+  last_used_at: string | null;
   created_at: string;
 }
 
@@ -174,7 +175,7 @@ export default function SettingsPage() {
       Name: "Custom Image Uploader",
       DestinationType: "ImageUploader",
       RequestMethod: "POST",
-      RequestURL: `${baseUrl}/api/upload`,
+      RequestURL: `${baseUrl}/api/sharex/upload`,
       Headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -187,6 +188,40 @@ export default function SettingsPage() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     showToast("Copied to clipboard!", "success");
+  };
+
+  const downloadShareXConfig = (token: string, description: string) => {
+    const config = getShareXConfig(token);
+    const blob = new Blob([JSON.stringify(config, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sharex-${description || "config"}.sxcu`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast("ShareX config downloaded!", "success");
+  };
+
+  const formatLastUsed = (lastUsedAt: string | null) => {
+    if (!lastUsedAt) return "Never used";
+    const date = new Date(lastUsedAt);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60)
+      return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    if (diffDays < 30) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    return date.toLocaleDateString();
   };
 
   if (isLoading) {
@@ -346,21 +381,35 @@ export default function SettingsPage() {
                       2
                     )}
                   </pre>
-                  <Button
-                    onClick={() =>
-                      copyToClipboard(
-                        JSON.stringify(
-                          getShareXConfig(newlyGeneratedToken.token),
-                          null,
-                          2
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={() =>
+                        copyToClipboard(
+                          JSON.stringify(
+                            getShareXConfig(newlyGeneratedToken.token),
+                            null,
+                            2
+                          )
                         )
-                      )
-                    }
-                    variant="secondary"
-                    size="sm"
-                  >
-                    Copy
-                  </Button>
+                      }
+                      variant="secondary"
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        downloadShareXConfig(
+                          newlyGeneratedToken.token,
+                          newTokenDescription || "config"
+                        )
+                      }
+                      variant="primary"
+                      size="sm"
+                    >
+                      Download
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -387,6 +436,9 @@ export default function SettingsPage() {
                     <p className="text-xs text-foreground-muted mt-1">
                       Hash: ...{token.token_hash.slice(-8)} • Created:{" "}
                       {new Date(token.created_at).toLocaleDateString()}
+                    </p>
+                    <p className="text-xs text-foreground-muted mt-1">
+                      Last used: {formatLastUsed(token.last_used_at)}
                     </p>
                   </div>
                   <Button
