@@ -163,12 +163,12 @@ export default function GalleryPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="text-center mb-8">
+    <div className="max-w-7xl mx-auto animate-page-enter">
+      <div className="text-center mb-8 px-4">
         <Badge variant="accent" className="mb-4">
           Public Gallery
         </Badge>
-        <h1 className="text-4xl font-bold mb-4 text-foreground">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
           Browse Images
         </h1>
         <p className="text-foreground-muted">
@@ -210,9 +210,9 @@ export default function GalleryPage() {
       ) : (
         <>
           <div
-            className="grid gap-4"
+            className="grid gap-4 px-4"
             style={{
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
             }}
           >
             {filteredImages.map((image) => (

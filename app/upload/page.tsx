@@ -311,12 +311,12 @@ export default function UploadPage() {
   const errorCount = files.filter((f) => f.status === "error").length;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6 px-4 animate-page-enter">
       <div className="text-center">
         <Badge variant="accent" className="mb-4">
           Image Upload
         </Badge>
-        <h1 className="text-4xl font-bold mb-4 text-foreground">
+        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
           Upload Your Images
         </h1>
         <p className="text-foreground-muted">
@@ -327,7 +327,7 @@ export default function UploadPage() {
 
       <Card>
         <div
-          className={`border-2 border-dashed rounded-lg p-12 text-center transition-all ${
+          className={`border-2 border-dashed rounded-lg p-6 md:p-12 text-center transition-all ${
             isDragging
               ? "border-accent bg-accent/10 scale-[1.02]"
               : "border-border hover:border-accent/50"
@@ -351,13 +351,15 @@ export default function UploadPage() {
               </svg>
             </div>
             <div>
-              <p className="text-lg font-medium text-foreground mb-2">
+              <p className="text-base md:text-lg font-medium text-foreground mb-2">
                 {isDragging ? "Drop files here" : "Drag and drop images here"}
               </p>
               <p className="text-sm text-foreground-muted mb-4">or</p>
               <Button
                 variant="primary"
+                size="lg"
                 onClick={() => fileInputRef.current?.click()}
+                className="w-full sm:w-auto"
               >
                 Browse Files
               </Button>

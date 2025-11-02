@@ -3,22 +3,22 @@ import { Button, Card, Badge } from "@/components/ui";
 
 export default function Home() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 animate-page-enter">
       {/* Hero Section */}
-      <section className="text-center py-12">
-        <Badge variant="accent" className="mb-4">
+      <section className="text-center py-8 md:py-12 px-4">
+        <Badge variant="accent" className="mb-4 animate-fade-in">
           Fast & Secure Image Hosting
         </Badge>
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-ctp-mauve to-ctp-lavender bg-clip-text text-transparent">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-ctp-mauve to-ctp-lavender bg-clip-text text-transparent animate-fade-in">
           Upload & Share Images Instantly
         </h1>
-        <p className="text-xl text-foreground-muted mb-8 max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-foreground-muted mb-8 max-w-2xl mx-auto px-4">
           A modern image hosting platform with drag-and-drop uploads, ShareX
           integration, and beautiful Catppuccin-themed interface.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center px-4">
           <Link href="/upload">
-            <Button variant="primary" size="lg">
+            <Button variant="primary" size="lg" className="w-full sm:w-auto">
               <svg
                 className="w-5 h-5 mr-2"
                 fill="none"
@@ -34,7 +34,7 @@ export default function Home() {
             </Button>
           </Link>
           <Link href="/settings">
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" className="w-full sm:w-auto">
               ShareX Setup
             </Button>
           </Link>
@@ -42,7 +42,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
         <Card hover>
           <div className="mb-4">
             <div className="w-12 h-12 bg-ctp-mauve/20 rounded-lg flex items-center justify-center">
@@ -120,9 +120,9 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="text-center py-12">
+      <section className="text-center py-8 md:py-12 px-4">
         <Card className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4 text-foreground">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
             Ready to start uploading?
           </h2>
           <p className="text-foreground-muted mb-6">
@@ -132,12 +132,12 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/upload">
-              <Button variant="primary" size="lg">
+              <Button variant="primary" size="lg" className="w-full sm:w-auto">
                 Start Uploading
               </Button>
             </Link>
             <Link href="/settings">
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 Configure ShareX
               </Button>
             </Link>

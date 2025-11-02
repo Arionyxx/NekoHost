@@ -7,3 +7,4 @@ export { default as Skeleton, Loader } from "./Skeleton";
 export { ToastProvider, useToast } from "./Toast";
 export { default as Dialog } from "./Dialog";
 export { default as Tooltip } from "./Tooltip";
+export { default as LoadingOverlay } from "./LoadingOverlay";

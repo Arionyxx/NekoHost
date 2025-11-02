@@ -67,11 +67,15 @@ export default function ImageCard({
 
   return (
     <div
-      className="group relative bg-background-mantle rounded-lg overflow-hidden shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-border"
+      className="group relative bg-background-mantle rounded-lg overflow-hidden shadow-soft hover:shadow-soft-lg transition-all duration-300 border border-border focus-within:ring-2 focus-within:ring-ctp-lavender"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link href={`/i/${id}`} className="block relative">
+      <Link
+        href={`/i/${id}`}
+        className="block relative focus:outline-none"
+        aria-label={`View image ${filename}`}
+      >
         <div
           className="relative overflow-hidden bg-ctp-surface0"
           style={{
@@ -117,7 +121,7 @@ export default function ImageCard({
           >
             <button
               onClick={handleCopyLink}
-              className="bg-accent hover:bg-accent-hover text-background p-2 rounded-md transition-colors shadow-soft"
+              className="bg-accent hover:bg-accent-hover text-background p-2 rounded-md transition-colors shadow-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-ctp-lavender"
               title="Copy link"
               aria-label="Copy link to clipboard"
             >
@@ -134,19 +138,19 @@ export default function ImageCard({
               </svg>
             </button>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-            <h3 className="font-semibold text-ctp-text mb-2 truncate">
+          <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 text-white">
+            <h3 className="font-semibold text-ctp-text mb-2 truncate text-sm md:text-base">
               {filename}
             </h3>
-            <div className="flex items-center justify-between text-sm text-ctp-subtext0">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-xs md:text-sm text-ctp-subtext0">
               <Link
                 href={`/u/${uploaderUsername}`}
-                className="hover:text-accent transition-colors truncate"
+                className="hover:text-accent transition-colors truncate focus:outline-none focus-visible:ring-1 focus-visible:ring-ctp-lavender rounded"
                 onClick={(e) => e.stopPropagation()}
               >
                 by {uploaderName}
               </Link>
-              <span>{formatDate(uploadDate)}</span>
+              <span className="text-xs">{formatDate(uploadDate)}</span>
             </div>
             <div className="flex items-center justify-between text-xs text-ctp-subtext1 mt-1">
               <span>{formatFileSize(fileSize)}</span>
