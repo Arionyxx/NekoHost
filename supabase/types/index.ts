@@ -95,7 +95,7 @@ export type Database = {
             foreignKeyName: "images_owner_id_fkey";
             columns: ["owner_id"];
             isOneToOne: false;
-            referencedRelation: "users";
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];

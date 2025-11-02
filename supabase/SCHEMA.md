@@ -42,7 +42,7 @@ Image metadata and ownership information.
 | Column        | Type            | Description                                    |
 | ------------- | --------------- | ---------------------------------------------- |
 | `id`          | UUID            | Primary key (auto-generated)                   |
-| `owner_id`    | UUID            | References `auth.users.id`, owner of the image |
+| `owner_id`    | UUID            | References `profiles.id`, owner of the image   |
 | `storage_key` | TEXT            | Unique path to file in storage bucket          |
 | `filename`    | TEXT            | Original filename (without extension)          |
 | `extension`   | TEXT            | File extension (e.g., "png", "jpg")            |
@@ -203,7 +203,7 @@ profiles
     ↓ (1:many)
 images
 
-auth.users
+auth.users (Supabase Auth)
     ↓ (1:many)
 api_tokens
 ```
@@ -217,6 +217,7 @@ The schema is defined in the following migration files (in order):
 1. `20250101000001_initial_schema.sql` - Creates tables, indexes, and basic triggers
 2. `20250101000002_rls_policies.sql` - Defines Row Level Security policies
 3. `20250101000003_storage_setup.sql` - Creates storage bucket and storage RLS policies
+4. `20250101000004_fix_images_profiles_relationship.sql` - Fixes foreign key relationship for existing databases
 
 ---
 
