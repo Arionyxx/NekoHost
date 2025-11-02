@@ -181,8 +181,7 @@ export default function ProfilePage() {
                       <Badge variant="info">Active</Badge>
                     </div>
                     <p className="text-xs text-foreground-muted mt-1">
-                      Created:{" "}
-                      {new Date(token.created_at).toLocaleDateString()}
+                      Created: {new Date(token.created_at).toLocaleDateString()}
                     </p>
                     {token.last_used_at && (
                       <p className="text-xs text-foreground-muted">

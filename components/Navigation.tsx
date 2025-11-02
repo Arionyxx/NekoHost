@@ -233,12 +233,18 @@ export default function Navigation() {
                   </>
                 ) : (
                   <div className="px-3 space-y-2">
-                    <Link href="/auth/sign-in" onClick={() => setIsMenuOpen(false)}>
+                    <Link
+                      href="/auth/sign-in"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
                       <Button variant="outline" className="w-full">
                         Sign In
                       </Button>
                     </Link>
-                    <Link href="/auth/sign-up" onClick={() => setIsMenuOpen(false)}>
+                    <Link
+                      href="/auth/sign-up"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
                       <Button variant="primary" className="w-full">
                         Sign Up
                       </Button>
