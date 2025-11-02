@@ -17,9 +17,31 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js App",
+  title: {
+    default: "Image Gallery",
+    template: "%s | Image Gallery",
+  },
   description:
-    "A Next.js 14 app with TypeScript and Catppuccin Macchiato theme",
+    "A modern image hosting and sharing platform with public galleries, private uploads, and seamless ShareX integration.",
+  keywords: ["image hosting", "image gallery", "photo sharing", "upload images"],
+  authors: [{ name: "Image Gallery" }],
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  ),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Image Gallery",
+    title: "Image Gallery - Upload and Share Images",
+    description:
+      "A modern image hosting and sharing platform with public galleries, private uploads, and seamless ShareX integration.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Image Gallery",
+    description:
+      "A modern image hosting and sharing platform with public galleries, private uploads, and seamless ShareX integration.",
+  },
 };
 
 export default function RootLayout({
