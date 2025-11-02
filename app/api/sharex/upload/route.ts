@@ -418,20 +418,19 @@ async function uploadFile(
       };
     }
 
-    // Get public URL
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("images").getPublicUrl(storageKey);
+    // Construct view URL for ShareX (not direct storage URL)
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const viewUrl = `${baseUrl}/i/${imageData.id}`;
 
     logger.info(
-      { userId, filename, imageId: imageData.id, visibility },
+      { userId, filename, imageId: imageData.id, visibility, viewUrl },
       "Image uploaded successfully"
     );
 
     return {
       success: true,
       filename,
-      url: publicUrl,
+      url: viewUrl,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
