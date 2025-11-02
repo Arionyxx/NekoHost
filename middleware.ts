@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
   const { response, user } = await updateSession(request);
 
   // Protected routes that require authentication
-  const protectedRoutes = ["/profile", "/upload"];
+  const protectedRoutes = ["/profile", "/settings", "/upload"];
   const isProtectedRoute = protectedRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
   );
