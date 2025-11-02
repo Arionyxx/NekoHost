@@ -4,6 +4,28 @@ import { Database, TablesInsert } from "@/supabase/types";
 import { logger, captureException } from "@/lib/logger";
 import { checkRateLimit } from "@/lib/rate-limiter";
 
+// Verify environment variables on module load
+const checkEnvironmentVariables = () => {
+  const requiredVars = {
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  };
+  
+  const missing = Object.entries(requiredVars)
+    .filter(([_, value]) => !value)
+    .map(([key]) => key);
+  
+  if (missing.length > 0) {
+    console.error("[ShareX API] Missing environment variables on module load:", missing);
+    logger.error({ missingVars: missing }, "ShareX API missing environment variables");
+  } else {
+    console.log("[ShareX API] Environment variables check passed");
+  }
+};
+
+// Run check on module load
+checkEnvironmentVariables();
+
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ALLOWED_MIME_TYPES = [
   "image/jpeg",
@@ -38,6 +60,13 @@ export async function POST(request: NextRequest) {
   const startTime = Date.now();
 
   try {
+    // Log request details for debugging (without sensitive data)
+    logger.info({
+      method: request.method,
+      url: request.url,
+      hasAuthHeader: !!request.headers.get("authorization"),
+    }, "ShareX upload request received");
+
     // Extract and validate Authorization header
     const authHeader = request.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -67,9 +96,28 @@ export async function POST(request: NextRequest) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+    // Enhanced environment variable validation and logging
     if (!supabaseUrl || !supabaseServiceKey) {
-      logger.error("Missing Supabase configuration");
-      captureException(new Error("Missing Supabase configuration"));
+      const missingVars = [];
+      if (!supabaseUrl) missingVars.push("NEXT_PUBLIC_SUPABASE_URL");
+      if (!supabaseServiceKey) missingVars.push("SUPABASE_SERVICE_ROLE_KEY");
+      
+      const errorMessage = `Missing required environment variables: ${missingVars.join(", ")}`;
+      
+      // Log to both logger and console for Vercel function logs
+      logger.error({
+        missingVariables: missingVars,
+        hasSupabaseUrl: !!supabaseUrl,
+        hasSupabaseServiceKey: !!supabaseServiceKey,
+      }, errorMessage);
+      
+      console.error("[ShareX Upload Error]", errorMessage, {
+        NEXT_PUBLIC_SUPABASE_URL: supabaseUrl ? "SET" : "MISSING",
+        SUPABASE_SERVICE_ROLE_KEY: supabaseServiceKey ? "SET" : "MISSING",
+      });
+      
+      captureException(new Error(errorMessage));
+      
       return NextResponse.json(
         { error: "Server configuration error" },
         { status: 500 }
@@ -86,10 +134,26 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (tokenError || !tokenData) {
+      // Log detailed error for debugging
       logger.warn(
-        { tokenHash: tokenHash.substring(0, 8) },
+        { 
+          tokenHash: tokenHash.substring(0, 8),
+          errorCode: tokenError?.code,
+          errorMessage: tokenError?.message,
+          errorDetails: tokenError?.details,
+        },
         "Invalid or expired token"
       );
+      
+      // Log to console for Vercel logs
+      if (tokenError) {
+        console.error("[ShareX Token Validation Error]", {
+          code: tokenError.code,
+          message: tokenError.message,
+          hint: tokenError.hint,
+        });
+      }
+      
       return NextResponse.json(
         { error: "Invalid or expired token" },
         { status: 401 }
@@ -186,10 +250,28 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     const duration = Date.now() - startTime;
-    logger.error({ error, duration }, "Unexpected error in ShareX upload");
+    
+    // Enhanced error logging for debugging
+    const errorDetails = {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+      duration,
+    };
+    
+    logger.error({ error: errorDetails }, "Unexpected error in ShareX upload");
+    
+    // Log to console for Vercel function logs
+    console.error("[ShareX Upload Unexpected Error]", {
+      message: errorDetails.message,
+      name: errorDetails.name,
+      duration: errorDetails.duration,
+      stack: errorDetails.stack,
+    });
+    
     captureException(
       error instanceof Error ? error : new Error("Unknown error"),
-      { endpoint: "/api/sharex/upload" }
+      { endpoint: "/api/sharex/upload", ...errorDetails }
     );
 
     return NextResponse.json(
@@ -244,7 +326,20 @@ async function uploadFile(
       });
 
     if (uploadError) {
-      logger.error({ error: uploadError, filename }, "Storage upload failed");
+      logger.error({ 
+        error: uploadError, 
+        filename, 
+        storageKey,
+        fileSize: file.size,
+        mimeType: file.type,
+      }, "Storage upload failed");
+      
+      console.error("[ShareX Storage Upload Error]", {
+        message: uploadError.message,
+        filename,
+        storageKey,
+      });
+      
       return {
         success: false,
         filename,
@@ -299,7 +394,21 @@ async function uploadFile(
       .single();
 
     if (dbError) {
-      logger.error({ error: dbError, filename }, "Database insert failed");
+      logger.error({ 
+        error: dbError, 
+        filename,
+        storageKey,
+        errorCode: dbError.code,
+        errorDetails: dbError.details,
+      }, "Database insert failed");
+      
+      console.error("[ShareX Database Insert Error]", {
+        message: dbError.message,
+        code: dbError.code,
+        hint: dbError.hint,
+        filename,
+      });
+      
       // Cleanup uploaded file
       await supabase.storage.from("images").remove([storageKey]);
       return {
@@ -325,11 +434,26 @@ async function uploadFile(
       url: publicUrl,
     };
   } catch (error) {
-    logger.error({ error, filename }, "Error during file upload");
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
+    logger.error({ 
+      error, 
+      filename,
+      errorMessage,
+      errorStack,
+    }, "Error during file upload");
+    
+    console.error("[ShareX File Upload Error]", {
+      filename,
+      message: errorMessage,
+      stack: errorStack,
+    });
+    
     return {
       success: false,
       filename,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: errorMessage,
     };
   }
 }
