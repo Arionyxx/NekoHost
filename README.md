@@ -9,11 +9,15 @@ A modern Next.js 14 application with TypeScript, Tailwind CSS, and the beautiful
 - 💅 **Tailwind CSS** for styling
 - 🌈 **Catppuccin Macchiato** color palette
 - 🔐 **Supabase Authentication** - Full auth integration with React hooks
-- 🎯 **UI Components** - Button, Card, Input, Badge, Skeleton/Loader
+- 🎯 **UI Components** - Button, Card, Input, Badge, Skeleton/Loader, Toast, Loading Overlay
 - 🔧 **Developer Tools** - ESLint, Prettier, Husky, lint-staged
-- 📱 **Responsive Design** with mobile-friendly navigation
+- 📱 **Responsive Design** - Mobile, tablet, and desktop optimized layouts
+- ♿️ **Accessibility** - WCAG 2.1 AA compliant with keyboard navigation and focus states
+- 🎭 **Smooth Animations** - Subtle transitions and animations consistent with theme
 - 🛡️ **Protected Routes** - Middleware-based route protection
 - ✅ **Environment Validation** - Runtime validation with Zod
+- 🧪 **Visual Regression Tests** - Automated screenshot testing with Playwright
+- 🎨 **Optimized Typography** - Enhanced readability with proper spacing and scales
 
 ## Getting Started
 
@@ -537,6 +541,147 @@ This application includes a dedicated API endpoint for ShareX integration, allow
 - Compress or resize images to under 50MB
 - Consider using image optimization tools before uploading
 
+## Deployment
+
+### Production Deployment Considerations
+
+#### Environment Variables
+
+Ensure all required environment variables are configured in your production environment:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-production-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
+```
+
+#### Build Optimization
+
+The application is optimized for production with:
+
+- **Static Asset Optimization**: Images and fonts are optimized automatically
+- **Code Splitting**: Automatic code splitting via Next.js App Router
+- **CSS Optimization**: Tailwind CSS purges unused styles in production
+- **Performance**: Lighthouse scores optimized for accessibility, performance, and SEO
+
+#### Vercel Deployment (Recommended)
+
+1. Push your code to GitHub
+2. Import the repository in Vercel
+3. Configure environment variables
+4. Deploy
+
+```bash
+pnpm build
+pnpm start
+```
+
+#### Docker Deployment
+
+Create a `Dockerfile`:
+
+```dockerfile
+FROM node:20-alpine AS base
+
+# Install dependencies
+FROM base AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+
+# Build
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
+
+# Production
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+#### Performance Monitoring
+
+- Monitor Core Web Vitals in production
+- Use Vercel Analytics or similar tools
+- Track Lighthouse scores regularly
+- Monitor Supabase usage and database performance
+
+#### CDN Configuration
+
+For optimal performance:
+
+- Enable CDN caching for static assets
+- Configure appropriate cache headers
+- Use image optimization services
+- Consider implementing a reverse proxy (Cloudflare, etc.)
+
+### Accessibility Features
+
+This application is built with accessibility in mind:
+
+- **WCAG 2.1 AA Compliant**: Color contrast ratios meet accessibility standards
+- **Keyboard Navigation**: Full keyboard accessibility with visible focus states
+- **Screen Reader Support**: Proper ARIA labels and semantic HTML
+- **Focus Indicators**: High-contrast mauve/lavender focus rings for visibility
+- **Responsive Design**: Mobile-first approach with tablet and desktop breakpoints
+- **Visual Regression Tests**: Automated screenshot testing to prevent styling regressions
+
+### Testing
+
+#### Visual Regression Tests
+
+Run visual regression tests to ensure UI consistency:
+
+```bash
+pnpm test
+```
+
+The test suite includes:
+
+- Desktop, tablet, and mobile viewport tests
+- Component state verification (focus, hover, etc.)
+- Theme consistency checks
+- Accessibility validation
+
+#### Accessibility Tests
+
+Automated accessibility tests verify:
+
+- Keyboard navigation
+- Focus state contrast
+- ARIA labels and roles
+- Image alt text
+- Form label associations
+- Color contrast ratios
+
+### Theme Attribution
+
+This application uses the [Catppuccin](https://github.com/catppuccin/catppuccin) color palette, specifically the **Macchiato** variant.
+
+**Catppuccin** is a community-driven pastel theme that aims to be the middle ground between low and high contrast themes. It consists of 4 beautiful pastel color palettes.
+
+- **Theme**: Catppuccin Macchiato
+- **License**: MIT
+- **Repository**: [github.com/catppuccin/catppuccin](https://github.com/catppuccin/catppuccin)
+- **Website**: [catppuccin.com](https://catppuccin.com)
+
+The color palette provides:
+
+- Excellent readability and accessibility
+- Soothing pastel colors that reduce eye strain
+- Consistent theming across all components
+- Beautiful gradients and hover states
+
+Special thanks to the Catppuccin team for creating and maintaining this beautiful theme! 🎨
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
@@ -544,6 +689,8 @@ This application includes a dedicated API endpoint for ShareX integration, allow
 - [Catppuccin Theme](https://github.com/catppuccin/catppuccin)
 - [Supabase Documentation](https://supabase.com/docs)
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
+- [WCAG Accessibility Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [Playwright Testing](https://playwright.dev)
 
 ## License
 

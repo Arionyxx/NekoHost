@@ -35,7 +35,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div className="fixed bottom-4 right-4 z-50 space-y-2">
+      <div
+        className="fixed bottom-4 right-4 z-50 space-y-2 px-4"
+        role="region"
+        aria-label="Notifications"
+      >
         {toasts.map((toast) => (
           <ToastItem
             key={toast.id}
@@ -58,13 +62,15 @@ function ToastItem({ toast, onClose }: { toast: Toast; onClose: () => void }) {
 
   return (
     <div
-      className={`${typeStyles[toast.type]} px-4 py-3 rounded-lg border shadow-lg flex items-center gap-3 min-w-[300px] max-w-md animate-slide-in`}
+      className={`${typeStyles[toast.type]} px-4 py-3 rounded-lg border shadow-lg flex items-center gap-3 min-w-[280px] max-w-md animate-slide-in`}
+      role="alert"
+      aria-live="polite"
     >
       <span className="flex-1 text-sm font-medium">{toast.message}</span>
       <button
         onClick={onClose}
-        className="text-current hover:opacity-70 transition-opacity"
-        aria-label="Close"
+        className="text-current hover:opacity-70 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-current rounded"
+        aria-label="Close notification"
       >
         <svg
           className="w-4 h-4"

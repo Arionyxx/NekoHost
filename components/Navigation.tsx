@@ -188,7 +188,7 @@ export default function Navigation() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-foreground hover:text-accent p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+              className="text-foreground hover:text-accent p-2 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ctp-lavender focus-visible:ring-offset-2 focus-visible:ring-offset-background-mantle"
               aria-label="Toggle menu"
             >
               <svg

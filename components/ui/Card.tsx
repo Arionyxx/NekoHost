@@ -13,7 +13,7 @@ export default function Card({
 }: CardProps) {
   return (
     <div
-      className={`bg-ctp-mantle border border-border rounded-lg p-6 shadow-soft ${
+      className={`bg-ctp-mantle border border-border rounded-lg p-4 md:p-6 shadow-soft ${
         hover
           ? "transition-all duration-200 hover:shadow-soft-lg hover:border-accent"
           : ""

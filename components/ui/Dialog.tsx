@@ -46,19 +46,29 @@ export default function Dialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-ctp-crust/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-ctp-crust/80 backdrop-blur-sm animate-overlay-show"
         onClick={onClose}
+        aria-hidden="true"
       />
-      <div className="relative bg-ctp-base border border-border rounded-lg shadow-xl max-w-md w-full mx-4 p-6 animate-fade-in">
+      <div
+        className="relative bg-ctp-base border border-border rounded-lg shadow-xl max-w-md w-full p-6 animate-fade-in"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-description"
+      >
         <div className="mb-4">
           <h3
+            id="dialog-title"
             className={`text-xl font-semibold mb-2 ${variantStyles[variant]}`}
           >
             {title}
           </h3>
-          <p className="text-foreground-muted">{description}</p>
+          <p id="dialog-description" className="text-foreground-muted">
+            {description}
+          </p>
         </div>
         <div className="flex gap-3 justify-end">
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
