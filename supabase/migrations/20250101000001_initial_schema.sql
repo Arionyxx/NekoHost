@@ -22,7 +22,7 @@ alter table public.profiles enable row level security;
 -- Create images table
 create table public.images (
   id uuid primary key default uuid_generate_v4(),
-  owner_id uuid references auth.users on delete cascade not null,
+  owner_id uuid not null,
   storage_key text not null,
   filename text not null,
   extension text not null,
@@ -36,7 +36,8 @@ create table public.images (
   updated_at timestamptz default now() not null,
   
   constraint images_storage_key_unique unique (storage_key),
-  constraint images_size_check check (size_bytes > 0)
+  constraint images_size_check check (size_bytes > 0),
+  constraint images_owner_id_fkey foreign key (owner_id) references public.profiles(id) on delete cascade
 );
 
 -- Add indexes for images table
