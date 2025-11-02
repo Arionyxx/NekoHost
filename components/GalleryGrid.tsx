@@ -7,7 +7,10 @@ interface GalleryGridProps {
   className?: string;
 }
 
-export default function GalleryGrid({ children, className = "" }: GalleryGridProps) {
+export default function GalleryGrid({
+  children,
+  className = "",
+}: GalleryGridProps) {
   return (
     <div
       className={`grid gap-4 ${className}`}

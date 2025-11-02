@@ -66,7 +66,12 @@ export default function ImageCard({
         <div
           className="relative overflow-hidden bg-ctp-surface0"
           style={{
-            aspectRatio: aspectRatio > 2 ? "2/1" : aspectRatio < 0.5 ? "1/2" : aspectRatio.toString(),
+            aspectRatio:
+              aspectRatio > 2
+                ? "2/1"
+                : aspectRatio < 0.5
+                  ? "1/2"
+                  : aspectRatio.toString(),
           }}
         >
           {!imageLoaded && (

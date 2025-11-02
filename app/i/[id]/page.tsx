@@ -67,7 +67,7 @@ export default function ImageDetailPage({
           return;
         }
 
-        const imageData = data as ImageData;
+        const imageData = data as unknown as ImageData;
 
         if (
           imageData.visibility === "private" &&
@@ -171,18 +171,14 @@ export default function ImageDetailPage({
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <Badge variant={image.visibility === "public" ? "success" : "warning"}>
+              <Badge
+                variant={image.visibility === "public" ? "success" : "warning"}
+              >
                 {image.visibility}
               </Badge>
-              {isOwner && (
-                <Badge variant="accent">Your Image</Badge>
-              )}
+              {isOwner && <Badge variant="accent">Your Image</Badge>}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.back()}
-            >
+            <Button variant="outline" size="sm" onClick={() => router.back()}>
               Back
             </Button>
           </div>
@@ -247,7 +243,9 @@ export default function ImageDetailPage({
           <div className="flex gap-2">
             <Button
               variant="primary"
-              onClick={() => window.open(getImageUrl(image.storage_key), "_blank")}
+              onClick={() =>
+                window.open(getImageUrl(image.storage_key), "_blank")
+              }
               className="flex-1"
             >
               View Full Size

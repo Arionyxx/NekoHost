@@ -408,6 +408,135 @@ See `/lib/supabase/README.md` for detailed documentation on using the Supabase c
    pnpm supabase:migrate
    ```
 
+## ShareX Integration
+
+This application includes a dedicated API endpoint for ShareX integration, allowing you to upload images directly from ShareX to your personal gallery.
+
+### Setting Up ShareX
+
+1. **Generate an API Token**:
+   - Navigate to the Settings page in the application
+   - Scroll to the "API Tokens" section
+   - Enter an optional description for your token (e.g., "My Desktop PC")
+   - Click "Generate Token"
+   - **Important**: Save the generated token immediately - you won't be able to see it again!
+
+2. **Download ShareX Configuration**:
+   - After generating a token, you'll see a ShareX Configuration section
+   - Click the "Download" button to download a `.sxcu` file
+   - Alternatively, copy the JSON configuration manually
+
+3. **Import Configuration into ShareX**:
+   - If you downloaded the `.sxcu` file, simply double-click it to import
+   - ShareX will automatically configure the custom uploader
+   - Alternatively, in ShareX:
+     - Go to **Destinations** → **Destination settings** → **Custom uploaders**
+     - Click **Import** → **From file** and select the `.sxcu` file
+     - Or click **New** and paste the JSON configuration manually
+
+4. **Set as Active Uploader**:
+   - In ShareX, go to **Destinations** → **Image uploader**
+   - Select your custom uploader from the list
+
+5. **Start Uploading**:
+   - Take a screenshot or select an image
+   - ShareX will automatically upload it to your gallery
+   - The image URL will be copied to your clipboard
+
+### ShareX Configuration Example
+
+```json
+{
+  "Version": "14.1.0",
+  "Name": "Custom Image Uploader",
+  "DestinationType": "ImageUploader",
+  "RequestMethod": "POST",
+  "RequestURL": "https://your-domain.com/api/sharex/upload",
+  "Headers": {
+    "Authorization": "Bearer your-token-here"
+  },
+  "Body": "MultipartFormData",
+  "FileFormName": "file",
+  "URL": "$json:url$"
+}
+```
+
+### API Endpoint Details
+
+**Endpoint**: `POST /api/sharex/upload`
+
+**Authentication**: Bearer token in Authorization header
+
+**Request**:
+
+- Content-Type: `multipart/form-data`
+- Field name: `file`
+- Max file size: 50MB
+- Allowed formats: JPEG, PNG, GIF, WebP, SVG, BMP, TIFF
+
+**Response** (Success):
+
+```json
+{
+  "success": true,
+  "url": "https://your-domain.com/storage/path/to/image.png",
+  "filename": "image.png"
+}
+```
+
+**Response** (Error):
+
+```json
+{
+  "error": "Error message description"
+}
+```
+
+**Rate Limiting**:
+
+- 100 uploads per hour per token
+- Rate limit headers included in response:
+  - `X-RateLimit-Limit`: Maximum requests allowed
+  - `X-RateLimit-Remaining`: Requests remaining in current window
+  - `X-RateLimit-Reset`: Timestamp when the rate limit resets
+
+### Managing API Tokens
+
+- **View Tokens**: See all your active tokens in the Settings page
+- **Last Used**: Check when each token was last used
+- **Revoke Tokens**: Delete tokens you no longer need
+- **Multiple Tokens**: Create separate tokens for different devices or applications
+
+### Security Best Practices
+
+- **Keep tokens secure**: Treat API tokens like passwords
+- **Use descriptive names**: Name tokens by device/location for easy management
+- **Revoke unused tokens**: Delete tokens you no longer use
+- **Monitor usage**: Check "Last used" timestamps to detect unauthorized usage
+- **Environment-specific tokens**: Use different tokens for different environments
+
+### Troubleshooting
+
+**"Invalid or expired token" error**:
+
+- Verify the token is correct and hasn't been deleted
+- Check that the Authorization header format is `Bearer <token>`
+
+**"Rate limit exceeded" error**:
+
+- Wait for the rate limit window to reset (shown in error message)
+- Consider generating multiple tokens if you need higher limits
+
+**"Invalid file type" error**:
+
+- Ensure you're uploading an image file
+- Check that the file format is supported (JPEG, PNG, GIF, WebP, SVG, BMP, TIFF)
+
+**"File size exceeds limit" error**:
+
+- Compress or resize images to under 50MB
+- Consider using image optimization tools before uploading
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)

@@ -48,7 +48,7 @@ export default function GalleryPage() {
         const from = pageNum * IMAGES_PER_PAGE;
         const to = from + IMAGES_PER_PAGE - 1;
 
-        let query = supabase
+        const query = supabase
           .from("images")
           .select(
             `
@@ -74,7 +74,7 @@ export default function GalleryPage() {
 
         if (error) throw error;
 
-        const newImages = (data || []) as ImageData[];
+        const newImages = (data || []) as unknown as ImageData[];
 
         if (reset) {
           setImages(newImages);
